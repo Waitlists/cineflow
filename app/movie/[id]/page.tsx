@@ -1,9 +1,7 @@
-'use client'
-
-import { useEffect } from 'react'
 import { getMovieDetails, getRecommendations, getImageUrl } from '@/lib/tmdb'
 import { MovieDetailContent } from './movie-detail-content'
 import { MediaRow } from '@/components/media-row'
+import { RedirectToPlayer } from '@/components/redirect-to-player'
 import type { Metadata } from 'next'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
@@ -19,16 +17,29 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default function MoviePage({ params, searchParams }: {
-  params: { id: string }
-  searchParams: { watch?: string }
+export default async function MoviePage({ params, searchParams }: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ watch?: string }>
 }) {
-  useEffect(() => {
-    if (searchParams.watch === 'true') {
-      window.location.href = `https://vidzy.luna.tattoo/embed/movie/${params.id}`
-    }
-  }, [searchParams.watch, params.id])
+  const resolvedParams = await params
+  const resolvedSearchParams = await searchParams
 
-  // This will only render if not redirecting
-  return null
+  if (resolvedSearchParams.watch === 'true') {
+    return <RedirectToPlayer url={`https://vidzy.luna.tattoo/embed/movie/${resolvedParams.id}`} />
+  }
+
+  const movie = await getMovieDetails(parseInt(resolvedParams.id))
+  const recommendations = await getRecommendations(movie.id, 'movie')
+
+  return (
+    <main className="min-h-screen pt-16">
+      <MovieDetailContent movie={movie} isWatchMode={false} />
+
+      {recommendations.length > 0 && (
+        <div className="py-12">
+          <MediaRow title="You May Also Like" items={recommendations} />
+        </div>
+      )}
+    </main>
+  )
 }
