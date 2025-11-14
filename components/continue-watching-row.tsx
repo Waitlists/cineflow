@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getContinueWatching, type ContinueWatchingItem } from '@/lib/watchlist'
+import { getContinueWatching, removeFromContinueWatching, type ContinueWatchingItem } from '@/lib/watchlist'
 import { MediaCard } from './media-card'
 import { type Movie } from '@/lib/tmdb'
+import { X } from 'lucide-react'
 
 export function ContinueWatchingRow() {
   const [items, setItems] = useState<ContinueWatchingItem[]>([])
@@ -53,12 +54,25 @@ export function ContinueWatchingRow() {
             }
 
             return (
-              <MediaCard
-                key={`${item.id}-${item.season}-${item.episode}`}
-                item={movieItem}
-                showPlay
-                href={href}
-              />
+              <div key={`${item.id}-${item.season}-${item.episode}`} className="relative group">
+                <MediaCard
+                  item={movieItem}
+                  showPlay
+                  href={href}
+                />
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    removeFromContinueWatching(item.id, item.mediaType)
+                    setItems(getContinueWatching())
+                  }}
+                  className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  aria-label="Remove from continue watching"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             )
           })}
         </div>

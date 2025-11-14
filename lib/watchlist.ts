@@ -51,18 +51,24 @@ export const getContinueWatching = (): ContinueWatchingItem[] => {
 export const addToContinueWatching = (item: Omit<ContinueWatchingItem, 'lastWatched'>) => {
   const continueWatching = getContinueWatching()
   const existingIndex = continueWatching.findIndex(i => i.id === item.id && i.mediaType === item.mediaType)
-  
+
   const newItem = { ...item, lastWatched: Date.now() }
-  
+
   if (existingIndex >= 0) {
     continueWatching[existingIndex] = newItem
   } else {
     continueWatching.unshift(newItem)
   }
-  
+
   if (continueWatching.length > 20) {
     continueWatching.pop()
   }
-  
+
   localStorage.setItem('cineflow_continue_watching', JSON.stringify(continueWatching))
+}
+
+export const removeFromContinueWatching = (id: number, mediaType: 'movie' | 'tv') => {
+  const continueWatching = getContinueWatching()
+  const filtered = continueWatching.filter(i => !(i.id === id && i.mediaType === mediaType))
+  localStorage.setItem('cineflow_continue_watching', JSON.stringify(filtered))
 }
