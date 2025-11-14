@@ -1,0 +1,85 @@
+import type { Metadata, Viewport } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
+import './globals.css'
+import { Header } from '@/components/header'
+
+const _geist = Geist({ subsets: ["latin"] });
+const _geistMono = Geist_Mono({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: 'CineFlow - Stream Movies & TV Shows in 4K Quality',
+  description: 'Watch the latest movies and TV series in stunning 4K quality. Discover new releases, trending content, and timeless classics on CineFlow - your ultimate streaming destination.',
+  keywords: [
+    'stream movies',
+    'watch tv shows',
+    '4k movies',
+    'new tv series',
+    'streaming service',
+    'watch movies online',
+    'tv shows online',
+    'latest movies',
+    'movie streaming',
+    'series streaming',
+    'cineby.app',
+    'xprime.tv',
+    'free movies',
+    'hd streaming',
+    '4k streaming',
+    'watch series',
+    'movie database',
+    'trending movies',
+    'popular tv shows',
+    'cinema online',
+    'streaming platform',
+    'watch online',
+    'movies and series',
+    'cineflow streaming',
+  ],
+  authors: [{ name: 'CineFlow' }],
+  openGraph: {
+    title: 'CineFlow - Stream Movies & TV Shows in 4K',
+    description: 'Watch the latest movies and TV series in stunning 4K quality',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CineFlow - Stream Movies & TV Shows in 4K',
+    description: 'Watch the latest movies and TV series in stunning 4K quality',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'CineFlow',
+  },
+    generator: 'v0.app'
+}
+
+export const viewport: Viewport = {
+  themeColor: '#0a0a0f',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en" className="dark">
+      <body className={`font-sans antialiased`}>
+        <Header />
+        {children}
+        <Analytics />
+      </body>
+    </html>
+  )
+}
