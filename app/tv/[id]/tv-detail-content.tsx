@@ -68,7 +68,7 @@ export function TVDetailContent({ show, initialSeason, initialEpisode, isWatchMo
             if (newSeasonNum !== selectedSeason || newEpisodeNum !== currentEpisode) {
               setSelectedSeason(newSeasonNum)
               setCurrentEpisode(newEpisodeNum)
-              window.history.pushState({}, '', `/tv/${show.id}/${newSeasonNum}/${newEpisodeNum}?watch=true`)
+              window.history.pushState({}, '', `/tv/${show.id}/${newSeasonNum}/${newEpisodeNum}/watch`)
               
               addToContinueWatching({
                 id: show.id,
@@ -107,11 +107,6 @@ export function TVDetailContent({ show, initialSeason, initialEpisode, isWatchMo
   
   const handlePlayEpisode = (episodeNumber: number) => {
     setCurrentEpisode(episodeNumber)
-    setShowPlayer(true)
-    const url = new URL(window.location.href)
-    url.searchParams.set('watch', 'true')
-    window.history.pushState({}, '', url.toString())
-    
     addToContinueWatching({
       id: show.id,
       mediaType: 'tv',
@@ -120,20 +115,21 @@ export function TVDetailContent({ show, initialSeason, initialEpisode, isWatchMo
       season: selectedSeason,
       episode: episodeNumber,
     })
+    window.location.href = `/tv/${show.id}/${selectedSeason}/${episodeNumber}/watch`
     window.dispatchEvent(new Event('continueWatchingUpdate'))
   }
   
+  const handleClosePlayer = () => {
+    setShowPlayer(false)
+    window.history.back()
+  }
+
   if (showPlayer) {
     return (
       <div className="fixed inset-0 z-50 bg-black">
         <button
           className="absolute top-6 right-6 z-50 text-foreground hover:opacity-80 transition-opacity"
-          onClick={() => {
-            setShowPlayer(false)
-            const url = new URL(window.location.href)
-            url.searchParams.delete('watch')
-            window.history.pushState({}, '', url.toString())
-          }}
+          onClick={handleClosePlayer}
           aria-label="Close player"
         >
           <X className="h-12 w-12 font-bold" />

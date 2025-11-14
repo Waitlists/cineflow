@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Play, Bookmark, BookmarkCheck, Star, Calendar, DollarSign, Volume2, VolumeX, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getImageUrl, type MovieDetails } from '@/lib/tmdb'
@@ -12,6 +13,7 @@ export function MovieDetailContent({ movie, isWatchMode }: { movie: MovieDetails
   const [inWatchlist, setInWatchlist] = useState(false)
   const [muted, setMuted] = useState(true)
   const [showPlayer, setShowPlayer] = useState(isWatchMode)
+  const router = useRouter()
   
   useEffect(() => {
     setInWatchlist(isInWatchlist(movie.id, 'movie'))
@@ -44,12 +46,15 @@ export function MovieDetailContent({ movie, isWatchMode }: { movie: MovieDetails
       title: movie.title,
       poster: movie.poster_path || '',
     })
-    const url = new URL(window.location.href)
-    url.searchParams.set('watch', 'true')
-    window.history.pushState({}, '', url.toString())
+    router.push(`/movie/${movie.id}/watch`)
     window.dispatchEvent(new Event('continueWatchingUpdate'))
   }
   
+  const handleClosePlayer = () => {
+    setShowPlayer(false)
+    router.back()
+  }
+
   const trailer = movie.videos?.results?.find(v => v.type === 'Trailer' && v.site === 'YouTube')
   const logo = movie.images?.logos?.find(l => l.file_path)
   const director = movie.credits?.crew?.find(c => c.job === 'Director')
@@ -60,12 +65,7 @@ export function MovieDetailContent({ movie, isWatchMode }: { movie: MovieDetails
       <div className="fixed inset-0 z-50 bg-black">
         <button
           className="absolute top-6 right-6 z-50 text-foreground hover:opacity-80 transition-opacity"
-          onClick={() => {
-            setShowPlayer(false)
-            const url = new URL(window.location.href)
-            url.searchParams.delete('watch')
-            window.history.pushState({}, '', url.toString())
-          }}
+          onClick={handleClosePlayer}
           aria-label="Close player"
         >
           <X className="h-12 w-12 font-bold" />
