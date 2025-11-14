@@ -4,15 +4,22 @@ import { MediaRow } from '@/components/media-row'
 import type { Metadata } from 'next'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const movie = await getMovieDetails(parseInt(params.id))
+  try {
+    const movie = await getMovieDetails(parseInt(params.id))
 
-  return {
-    description: movie.overview,
-    openGraph: {
-      title: movie.title,
+    return {
       description: movie.overview,
-      images: [getImageUrl(movie.backdrop_path, 'original')],
-    },
+      openGraph: {
+        title: movie.title,
+        description: movie.overview,
+        images: [getImageUrl(movie.backdrop_path, 'original')],
+      },
+    }
+  } catch (error) {
+    return {
+      title: 'Movie',
+      description: 'Watch this movie',
+    }
   }
 }
 
