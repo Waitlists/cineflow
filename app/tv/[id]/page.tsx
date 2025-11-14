@@ -31,13 +31,13 @@ export default async function TVPage({
   const show = await getTVDetails(parseInt(id))
 
   if (watch === 'true') {
-    // Redirect to first episode
+    // Redirect to first episode player
     const firstSeason = show.seasons?.find(s => s.season_number > 0)
     if (firstSeason) {
       const seasonDetails = await getSeasonDetails(show.id, firstSeason.season_number)
       const firstEpisode = seasonDetails.episodes?.[0]
       if (firstEpisode) {
-        redirect(`/tv/${id}/${firstSeason.season_number}/${firstEpisode.episode_number}?watch=true`)
+        redirect(`https://vidzy.luna.tattoo/embed/tv/${id}/${firstSeason.season_number}/${firstEpisode.episode_number}`)
       }
     }
   }

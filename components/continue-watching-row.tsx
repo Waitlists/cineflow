@@ -47,16 +47,16 @@ export function ContinueWatchingRow() {
             const movieItem = movieItems.find(m => m.id === item.id)!
             let href = `/${item.mediaType}/${item.id}`
             if (item.mediaType === 'tv' && item.season && item.episode) {
-              href = `/tv/${item.id}/${item.season}/${item.episode}?watch=true`
+              href = `https://vidzy.luna.tattoo/embed/tv/${item.id}/${item.season}/${item.episode}`
             } else if (item.mediaType === 'movie') {
-              href = `/movie/${item.id}?watch=true`
+              href = `https://vidzy.luna.tattoo/embed/movie/${item.id}`
             }
-            
+
             return (
-              <MediaCard 
+              <MediaCard
                 key={`${item.id}-${item.season}-${item.episode}`}
-                item={movieItem} 
-                showPlay 
+                item={movieItem}
+                showPlay
                 href={href}
               />
             )

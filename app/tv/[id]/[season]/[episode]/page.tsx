@@ -2,6 +2,7 @@ import { getTVDetails } from '@/lib/tmdb'
 import { TVDetailContent } from '../../tv-detail-content'
 import { MediaRow } from '@/components/media-row'
 import { getRecommendations, getImageUrl } from '@/lib/tmdb'
+import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
@@ -24,6 +25,10 @@ export default async function EpisodePage({
   params: { id: string; season: string; episode: string }
   searchParams: { watch?: string }
 }) {
+  if (searchParams.watch === 'true') {
+    redirect(`https://vidzy.luna.tattoo/embed/tv/${params.id}/${params.season}/${params.episode}`)
+  }
+
   const show = await getTVDetails(parseInt(params.id))
   const recommendations = await getRecommendations(show.id, 'tv')
   const seasonNumber = parseInt(params.season)
@@ -35,7 +40,7 @@ export default async function EpisodePage({
         show={show}
         initialSeason={seasonNumber}
         initialEpisode={episodeNumber}
-        isWatchMode={searchParams.watch === 'true'}
+        isWatchMode={false}
         id={params.id}
       />
 
