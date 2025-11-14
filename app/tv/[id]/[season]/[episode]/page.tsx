@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect } from 'react'
 import { getTVDetails } from '@/lib/tmdb'
 import { TVDetailContent } from '../../tv-detail-content'
 import { MediaRow } from '@/components/media-row'
@@ -17,32 +20,19 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default async function EpisodePage({ 
+export default function EpisodePage({
   params,
-  searchParams 
-}: { 
+  searchParams
+}: {
   params: { id: string; season: string; episode: string }
   searchParams: { watch?: string }
 }) {
-  const show = await getTVDetails(parseInt(params.id))
-  const recommendations = await getRecommendations(show.id, 'tv')
-  const seasonNumber = parseInt(params.season)
-  const episodeNumber = parseInt(params.episode)
-  
-  return (
-    <main className="min-h-screen pt-16">
-      <TVDetailContent 
-        show={show}
-        initialSeason={seasonNumber}
-        initialEpisode={episodeNumber}
-        isWatchMode={searchParams.watch === 'true'}
-      />
-      
-      {recommendations.length > 0 && (
-        <div className="py-12">
-          <MediaRow title="You May Also Like" items={recommendations} />
-        </div>
-      )}
-    </main>
-  )
+  useEffect(() => {
+    if (searchParams.watch === 'true') {
+      window.location.href = `https://vidzy.luna.tattoo/embed/tv/${params.id}/${params.season}/${params.episode}`
+    }
+  }, [searchParams.watch, params.id, params.season, params.episode])
+
+  // This will only render if not redirecting
+  return null
 }

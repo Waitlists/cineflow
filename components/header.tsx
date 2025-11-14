@@ -82,7 +82,7 @@ export function Header() {
             className="text-muted-foreground hover:text-white hover:bg-white/10 transition-colors"
           >
             <a 
-              href="https://discord.gg/cineflow" 
+              href="https://discord.gg/YKhBpyVmVz" 
               target="_blank" 
               rel="noopener noreferrer"
               aria-label="Join our Discord"
