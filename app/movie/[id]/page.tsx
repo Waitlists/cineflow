@@ -1,7 +1,6 @@
 import { getMovieDetails, getRecommendations, getImageUrl } from '@/lib/tmdb'
 import { MovieDetailContent } from './movie-detail-content'
 import { MediaRow } from '@/components/media-row'
-import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {

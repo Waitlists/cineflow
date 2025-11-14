@@ -47,9 +47,9 @@ export function ContinueWatchingRow() {
             const movieItem = movieItems.find(m => m.id === item.id)!
             let href = `/${item.mediaType}/${item.id}`
             if (item.mediaType === 'tv' && item.season && item.episode) {
-              href = `https://vidzy.luna.tattoo/embed/tv/${item.id}/${item.season}/${item.episode}`
+              href = `/tv/${item.id}/${item.season}/${item.episode}?watch=true`
             } else if (item.mediaType === 'movie') {
-              href = `https://vidzy.luna.tattoo/embed/movie/${item.id}`
+              href = `/movie/${item.id}?watch=true`
             }
 
             return (
