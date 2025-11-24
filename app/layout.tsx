@@ -5,64 +5,83 @@ import Script from 'next/script'
 import './globals.css'
 import { Header } from '@/components/header'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const _geist = Geist({ subsets: ['latin'] })
+const _geistMono = Geist_Mono({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Cineflow',
-  description: 'Watch the latest movies and TV series in stunning 4K quality. Discover new releases, trending content, and timeless classics on CineFlow - your ultimate streaming destination.',
+  metadataBase: new URL('https://cineflow.watch'),
+  title: 'CineFlow – Stream Movies & TV Shows in 4K',
+  description:
+    'Stream the latest movies and TV series in stunning 4K. CineFlow offers trending films, new episodes, and classic titles—all free, fast, and easy to watch.',
   keywords: [
-    'stream movies',
-    'watch tv shows',
-    '4k movies',
-    'new tv series',
-    'streaming service',
-    'watch movies online',
-    'tv shows online',
-    'latest movies',
-    'movie streaming',
-    'series streaming',
-    'cineby.app',
-    'xprime.tv',
-    'free movies',
-    'hd streaming',
+    'stream movies online',
+    'watch tv shows online',
     '4k streaming',
-    'watch series',
-    'movie database',
+    'free movies',
+    'free tv series',
+    'latest movies 2025',
+    'HD movies online',
+    'best streaming sites',
     'trending movies',
-    'popular tv shows',
-    'cinema online',
-    'streaming platform',
-    'watch online',
-    'movies and series',
-    'cineflow streaming',
-    'lunastream',
-    'free movies online',
+    'popular tv shows'
   ],
   authors: [{ name: 'CineFlow' }],
-  openGraph: {
-    title: 'CineFlow - Stream Movies & TV Shows',
-    description: 'Watch the latest movies and TV series',
-    type: 'website',
+  creator: 'CineFlow',
+  publisher: 'CineFlow',
+
+  alternates: {
+    canonical: 'https://cineflow.watch',
   },
+
+  openGraph: {
+    title: 'CineFlow – Watch Movies & TV Shows in 4K',
+    description:
+      'Watch the latest movies and TV shows online. Stream in crystal-clear HD & 4K on CineFlow.',
+    url: 'https://cineflow.watch',
+    siteName: 'CineFlow',
+    type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'CineFlow Streaming Preview',
+      },
+    ],
+  },
+
   twitter: {
     card: 'summary_large_image',
-    title: 'CineFlow - Stream Movies & TV Shows in 4K',
-    description: 'Watch the latest movies and TV series',
+    title: 'CineFlow – Stream Movies & Series in 4K',
+    description:
+      'Watch newly released movies and trending TV shows in HD & 4K on CineFlow.',
+    images: ['/og-image.png'],
+    creator: '@cineflow',
   },
+
   robots: {
     index: true,
     follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      maxSnippet: -1,
+      maxImagePreview: 'large',
+      maxVideoPreview: -1,
+    },
   },
+
   manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+  },
+
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'CineFlow',
-  },
-  generator: 'cat',
-  icons: {
-    icon: '/favicon.png',
   },
 }
 
@@ -76,16 +95,29 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en" className="dark">
-      <body className={`font-sans antialiased`}>
-        <Script strategy="afterInteractive">{`(function(s){s.dataset.zone='10187427',s.src='https://bvtpk.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`}</Script>
+      <body className="font-sans antialiased">
+
+        {/* Your ad/tracker script */}
+        <Script strategy="afterInteractive">{`
+          (function(s){
+            s.dataset.zone='10187427',
+            s.src='https://bvtpk.com/tag.min.js'
+          })
+          ([document.documentElement, document.body]
+          .filter(Boolean)
+          .pop()
+          .appendChild(document.createElement('script')))
+        `}</Script>
+
         <Header />
         {children}
         <Analytics />
+
       </body>
     </html>
   )
