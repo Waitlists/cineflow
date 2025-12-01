@@ -105,7 +105,7 @@ export default function RootLayout({
         {/* Your ad/tracker script */}
         <Script strategy="afterInteractive">{`
           (function(s){
-            s.dataset.zone='10187427',
+            s.dataset.zone='10262537',
             s.src='https://bvtpk.com/tag.min.js'
           })
           ([document.documentElement, document.body]
