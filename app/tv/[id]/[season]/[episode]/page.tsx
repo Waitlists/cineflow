@@ -36,7 +36,7 @@ export default async function EpisodePage({
           <X className="h-12 w-12 font-bold" />
         </button>
         <iframe
-          src={`https://vidzy.luna.tattoo/embed/tv/${params.id}/${params.season}/${params.episode}`}
+          src={`https://player.videasy.net/tv/${params.id}/${params.season}/${params.episode}?nextEpisode=true&autoplayNextEpisode=true&episodeSelector=true&overlay=true&color=8B5CF6`}
           className="w-full h-full"
           allowFullScreen
           allow="autoplay; fullscreen"

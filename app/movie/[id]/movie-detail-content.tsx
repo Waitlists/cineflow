@@ -71,7 +71,7 @@ export function MovieDetailContent({ movie, isWatchMode }: { movie: MovieDetails
           <X className="h-12 w-12 font-bold" />
         </button>
         <iframe
-          src={`https://vidzy.luna.tattoo/embed/movie/${movie.id}`}
+          src={`https://player.videasy.net/movie/${movie.id}?overlay=true&color=8B5CF6`}
           className="w-full h-full"
           allowFullScreen
           allow="autoplay; fullscreen"

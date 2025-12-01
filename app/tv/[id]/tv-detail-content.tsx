@@ -136,7 +136,7 @@ export function TVDetailContent({ show, initialSeason, initialEpisode, isWatchMo
         </button>
         <iframe
           ref={iframeRef}
-          src={`https://vidzy.luna.tattoo/embed/tv/${tvId}/${selectedSeason}/${currentEpisode}`}
+          src={`https://player.videasy.net/tv/${tvId}/${selectedSeason}/${currentEpisode}?nextEpisode=true&autoplayNextEpisode=true&episodeSelector=true&overlay=true&color=8B5CF6`}
           className="w-full h-full"
           allowFullScreen
           allow="autoplay; fullscreen"
