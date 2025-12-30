@@ -112,63 +112,63 @@ export const getImageUrl = (path: string | null, size: string = 'original') => {
 }
 
 export const getTrending = async (mediaType: 'all' | 'movie' | 'tv' = 'all', timeWindow: 'day' | 'week' = 'week'): Promise<Movie[]> => {
-  const res = await fetch(`${TMDB_BASE_URL}/trending/${mediaType}/${timeWindow}?api_key=${TMDB_API_KEY}`)
+  const res = await fetch(`${TMDB_BASE_URL}/trending/${mediaType}/${timeWindow}?api_key=${TMDB_API_KEY}&language=en-US`)
   const data = await res.json()
   return data.results || []
 }
 
 export const getMovieDetails = async (id: number): Promise<MovieDetails> => {
-  const res = await fetch(`${TMDB_BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}&append_to_response=credits,videos,images`)
+  const res = await fetch(`${TMDB_BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}&language=en-US&append_to_response=credits,videos,images`)
   return res.json()
 }
 
 export const getTVDetails = async (id: number): Promise<MovieDetails> => {
-  const res = await fetch(`${TMDB_BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}&append_to_response=credits,videos,images`)
+  const res = await fetch(`${TMDB_BASE_URL}/tv/${id}?api_key=${TMDB_API_KEY}&language=en-US&append_to_response=credits,videos,images`)
   return res.json()
 }
 
 export const getSeasonDetails = async (tvId: number, seasonNumber: number): Promise<{ episodes: Episode[] }> => {
-  const res = await fetch(`${TMDB_BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}`)
+  const res = await fetch(`${TMDB_BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}&language=en-US`)
   return res.json()
 }
 
 export const getPersonDetails = async (id: number): Promise<PersonDetails> => {
-  const res = await fetch(`${TMDB_BASE_URL}/person/${id}?api_key=${TMDB_API_KEY}&append_to_response=combined_credits`)
+  const res = await fetch(`${TMDB_BASE_URL}/person/${id}?api_key=${TMDB_API_KEY}&language=en-US&append_to_response=combined_credits`)
   return res.json()
 }
 
 export const searchMulti = async (query: string): Promise<Movie[]> => {
-  const res = await fetch(`${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`)
+  const res = await fetch(`${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&language=en-US&query=${encodeURIComponent(query)}`)
   const data = await res.json()
   return data.results || []
 }
 
 export const getPopular = async (mediaType: 'movie' | 'tv'): Promise<Movie[]> => {
-  const res = await fetch(`${TMDB_BASE_URL}/${mediaType}/popular?api_key=${TMDB_API_KEY}`)
+  const res = await fetch(`${TMDB_BASE_URL}/${mediaType}/popular?api_key=${TMDB_API_KEY}&language=en-US`)
   const data = await res.json()
   return data.results || []
 }
 
 export const getByGenre = async (genreId: number, mediaType: 'movie' | 'tv'): Promise<Movie[]> => {
-  const res = await fetch(`${TMDB_BASE_URL}/discover/${mediaType}?api_key=${TMDB_API_KEY}&with_genres=${genreId}`)
+  const res = await fetch(`${TMDB_BASE_URL}/discover/${mediaType}?api_key=${TMDB_API_KEY}&language=en-US&with_genres=${genreId}`)
   const data = await res.json()
   return data.results || []
 }
 
 export const getGenres = async (mediaType: 'movie' | 'tv'): Promise<Genre[]> => {
-  const res = await fetch(`${TMDB_BASE_URL}/genre/${mediaType}/list?api_key=${TMDB_API_KEY}`)
+  const res = await fetch(`${TMDB_BASE_URL}/genre/${mediaType}/list?api_key=${TMDB_API_KEY}&language=en-US`)
   const data = await res.json()
   return data.genres || []
 }
 
 export const getRecommendations = async (id: number, mediaType: 'movie' | 'tv'): Promise<Movie[]> => {
-  const res = await fetch(`${TMDB_BASE_URL}/${mediaType}/${id}/recommendations?api_key=${TMDB_API_KEY}`)
+  const res = await fetch(`${TMDB_BASE_URL}/${mediaType}/${id}/recommendations?api_key=${TMDB_API_KEY}&language=en-US`)
   const data = await res.json()
   return data.results || []
 }
 
 export const getSimilar = async (id: number, mediaType: 'movie' | 'tv'): Promise<Movie[]> => {
-  const res = await fetch(`${TMDB_BASE_URL}/${mediaType}/${id}/similar?api_key=${TMDB_API_KEY}`)
+  const res = await fetch(`${TMDB_BASE_URL}/${mediaType}/${id}/similar?api_key=${TMDB_API_KEY}&language=en-US`)
   const data = await res.json()
   return data.results || []
 }
