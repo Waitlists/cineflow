@@ -1,11 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getGenres, getByGenre, type Genre, type Movie } from '@/lib/tmdb'
+import { getGenres, getByGenre, getTrending, getPopular, type Genre, type Movie } from '@/lib/tmdb'
 import { MediaCard } from '@/components/media-card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Slider } from '@/components/ui/slider'
+import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { Film, Tv } from 'lucide-react'
+import { Film, Tv, Search, Filter, X, TrendingUp, Star, Calendar } from 'lucide-react'
+import { HeroCarousel } from '@/components/hero-carousel'
 
 export default function DiscoverPage() {
   const [movieGenres, setMovieGenres] = useState<Genre[]>([])
@@ -14,25 +19,50 @@ export default function DiscoverPage() {
   const [mediaType, setMediaType] = useState<'movie' | 'tv'>('movie')
   const [results, setResults] = useState<Movie[]>([])
   const [loading, setLoading] = useState(false)
+  const [trending, setTrending] = useState<Movie[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState('popularity.desc')
+  const [minRating, setMinRating] = useState([0])
+  const [minYear, setMinYear] = useState('')
+  const [showFilters, setShowFilters] = useState(false)
   
   useEffect(() => {
     Promise.all([
       getGenres('movie'),
-      getGenres('tv')
-    ]).then(([movies, tv]) => {
+      getGenres('tv'),
+      getTrending('all', 'week')
+    ]).then(([movies, tv, trendingItems]) => {
       setMovieGenres(movies)
       setTVGenres(tv)
+      setTrending(trendingItems)
     })
   }, [])
   
   useEffect(() => {
-    if (selectedGenre) {
+    if (searchQuery.trim()) {
       setLoading(true)
-      getByGenre(selectedGenre, mediaType)
-        .then(setResults)
+      fetch(`https://api.themoviedb.org/3/search/multi?api_key=a222e5eda9654d1c6974da834e756c12&language=en-US&query=${encodeURIComponent(searchQuery)}`)
+        .then(res => res.json())
+        .then(data => setResults(data.results?.filter(item => item.media_type === mediaType || (mediaType === 'movie' && item.title) || (mediaType === 'tv' && item.name)) || []))
         .finally(() => setLoading(false))
+    } else if (selectedGenre) {
+      setLoading(true)
+      const params = new URLSearchParams({
+        api_key: 'a222e5eda9654d1c6974da834e756c12',
+        language: 'en-US',
+        with_genres: selectedGenre.toString(),
+        sort_by: sortBy,
+        'vote_average.gte': minRating[0].toString(),
+        ...(minYear && { 'primary_release_date.gte': `${minYear}-01-01` })
+      })
+      fetch(`https://api.themoviedb.org/3/discover/${mediaType}?${params}`)
+        .then(res => res.json())
+        .then(data => setResults(data.results || []))
+        .finally(() => setLoading(false))
+    } else {
+      setResults([])
     }
-  }, [selectedGenre, mediaType])
+  }, [selectedGenre, mediaType, sortBy, minRating, minYear, searchQuery])
   
   const currentGenres = mediaType === 'movie' ? movieGenres : tvGenres
   
@@ -47,53 +77,139 @@ export default function DiscoverPage() {
             Explore {mediaType === 'movie' ? 'movies' : 'TV shows'} by genre
           </p>
         </div>
-        
-        <div className="mb-8 space-y-6">
-          <div className="flex gap-3">
-            <Button
-              variant={mediaType === 'movie' ? 'default' : 'secondary'}
-              onClick={() => {
-                setMediaType('movie')
-                setSelectedGenre(null)
-                setResults([])
-              }}
-              className="gap-2"
-            >
-              <Film className="h-4 w-4" />
-              Movies
-            </Button>
-            <Button
-              variant={mediaType === 'tv' ? 'default' : 'secondary'}
-              onClick={() => {
-                setMediaType('tv')
-                setSelectedGenre(null)
-                setResults([])
-              }}
-              className="gap-2"
-            >
-              <Tv className="h-4 w-4" />
-              TV Shows
-            </Button>
+
+        {trending.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+              <TrendingUp className="h-6 w-6" />
+              Trending Now
+            </h2>
+            <HeroCarousel items={trending.slice(0, 5).map(item => ({ ...item, images: { logos: [] } }))} />
           </div>
-          
-          <div>
-            <h2 className="text-sm font-medium text-muted-foreground mb-3">Select a Genre</h2>
-            <div className="flex flex-wrap gap-2">
-              {currentGenres.map(genre => (
-                <Button
-                  key={genre.id}
-                  variant={selectedGenre === genre.id ? 'default' : 'outline'}
-                  onClick={() => setSelectedGenre(genre.id)}
-                  className={cn(
-                    "transition-all",
-                    selectedGenre === genre.id && "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                  )}
-                  size="sm"
-                >
-                  {genre.name}
-                </Button>
-              ))}
+        )}
+
+        <div className="mb-8 space-y-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex gap-3">
+              <Button
+                variant={mediaType === 'movie' ? 'default' : 'secondary'}
+                onClick={() => {
+                  setMediaType('movie')
+                  setSelectedGenre(null)
+                  setResults([])
+                }}
+                className="gap-2"
+              >
+                <Film className="h-4 w-4" />
+                Movies
+              </Button>
+              <Button
+                variant={mediaType === 'tv' ? 'default' : 'secondary'}
+                onClick={() => {
+                  setMediaType('tv')
+                  setSelectedGenre(null)
+                  setResults([])
+                }}
+                className="gap-2"
+              >
+                <Tv className="h-4 w-4" />
+                TV Shows
+              </Button>
             </div>
+
+            <div className="flex gap-2 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-64">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
+                className="gap-2"
+              >
+                <Filter className="h-4 w-4" />
+                Filters
+                {showFilters && <X className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
+
+          {showFilters && (
+            <div className="glass rounded-lg p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block flex items-center gap-2">
+                    <Star className="h-4 w-4" />
+                    Minimum Rating
+                  </label>
+                  <Slider
+                    value={minRating}
+                    onValueChange={setMinRating}
+                    max={10}
+                    step={0.5}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>0</span>
+                    <span>{minRating[0]}</span>
+                    <span>10</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Release Year From
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="e.g. 2020"
+                    value={minYear}
+                    onChange={(e) => setMinYear(e.target.value)}
+                    min="1900"
+                    max={new Date().getFullYear()}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Sort By</label>
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="popularity.desc">Popularity</SelectItem>
+                      <SelectItem value="vote_average.desc">Rating</SelectItem>
+                      <SelectItem value="release_date.desc">Release Date</SelectItem>
+                      <SelectItem value="title.asc">Title A-Z</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          )}
+        
+        <div className="mb-8">
+          <h2 className="text-sm font-medium text-muted-foreground mb-3">Select a Genre</h2>
+          <div className="flex flex-wrap gap-2">
+            {currentGenres.map(genre => (
+              <Badge
+                key={genre.id}
+                variant={selectedGenre === genre.id ? 'default' : 'secondary'}
+                className={cn(
+                  "cursor-pointer transition-all hover:scale-105",
+                  selectedGenre === genre.id && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                )}
+                onClick={() => setSelectedGenre(selectedGenre === genre.id ? null : genre.id)}
+              >
+                {genre.name}
+              </Badge>
+            ))}
           </div>
         </div>
         
