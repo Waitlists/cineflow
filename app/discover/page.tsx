@@ -10,7 +10,6 @@ import { Slider } from '@/components/ui/slider'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { Film, Tv, Search, Filter, X, TrendingUp, Star, Calendar } from 'lucide-react'
-import { HeroCarousel } from '@/components/hero-carousel'
 
 export default function DiscoverPage() {
   const [movieGenres, setMovieGenres] = useState<Genre[]>([])
@@ -41,7 +40,12 @@ export default function DiscoverPage() {
   useEffect(() => {
     if (searchQuery.trim()) {
       setLoading(true)
-      fetch(`https://api.themoviedb.org/3/search/multi?api_key=a222e5eda9654d1c6974da834e756c12&language=en-US&query=${encodeURIComponent(searchQuery)}`)
+      const params = new URLSearchParams({
+        api_key: 'a222e5eda9654d1c6974da834e756c12',
+        language: 'en-US',
+        query: searchQuery
+      })
+      fetch(`https://api.themoviedb.org/3/search/multi?${params}`)
         .then(res => res.json())
         .then(data => setResults(data.results?.filter(item => item.media_type === mediaType || (mediaType === 'movie' && item.title) || (mediaType === 'tv' && item.name)) || []))
         .finally(() => setLoading(false))
@@ -84,7 +88,11 @@ export default function DiscoverPage() {
               <TrendingUp className="h-6 w-6" />
               Trending Now
             </h2>
-            <HeroCarousel items={trending.slice(0, 5).map(item => ({ ...item, images: { logos: [] } }))} />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              {trending.slice(0, 5).map(item => (
+                <MediaCard key={item.id} item={{ ...item, media_type: 'movie' }} />
+              ))}
+            </div>
           </div>
         )}
 
