@@ -4,12 +4,8 @@ import { useState, useEffect } from 'react'
 import { getGenres, getByGenre, getTrending, getPopular, type Genre, type Movie } from '@/lib/tmdb'
 import { MediaCard } from '@/components/media-card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Slider } from '@/components/ui/slider'
-import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { Film, Tv, Search, Filter, X, TrendingUp, Star, Calendar } from 'lucide-react'
+import { Film, Tv, Filter, X } from 'lucide-react'
 
 export default function DiscoverPage() {
   const [movieGenres, setMovieGenres] = useState<Genre[]>([])
@@ -45,7 +41,7 @@ export default function DiscoverPage() {
         language: 'en-US',
         query: searchQuery
       })
-      fetch(`https://api.themoviedb.org/3/search/multi?${params}`)
+      fetch('https://api.themoviedb.org/3/search/multi?' + params.toString())
         .then(res => res.json())
         .then(data => setResults(data.results?.filter(item => item.media_type === mediaType || (mediaType === 'movie' && item.title) || (mediaType === 'tv' && item.name)) || []))
         .finally(() => setLoading(false))
@@ -59,7 +55,7 @@ export default function DiscoverPage() {
         'vote_average.gte': minRating[0].toString(),
         ...(minYear && { 'primary_release_date.gte': `${minYear}-01-01` })
       })
-      fetch(`https://api.themoviedb.org/3/discover/${mediaType}?${params}`)
+      fetch('https://api.themoviedb.org/3/discover/' + mediaType + '?' + params.toString())
         .then(res => res.json())
         .then(data => setResults(data.results || []))
         .finally(() => setLoading(false))
@@ -82,7 +78,7 @@ export default function DiscoverPage() {
           </p>
         </div>
 
-        {trending.length > 0 && (
+        {/* {trending.length > 0 && (
           <div className="mb-12">
             <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
               <TrendingUp className="h-6 w-6" />
@@ -94,7 +90,7 @@ export default function DiscoverPage() {
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         <div className="mb-8 space-y-6">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -126,7 +122,7 @@ export default function DiscoverPage() {
             </div>
 
             <div className="flex gap-2 w-full sm:w-auto">
-              <div className="relative flex-1 sm:w-64">
+              {/* <div className="relative flex-1 sm:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search..."
@@ -134,7 +130,7 @@ export default function DiscoverPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
                 />
-              </div>
+              </div> */}
               <Button
                 variant="outline"
                 onClick={() => setShowFilters(!showFilters)}
@@ -147,7 +143,7 @@ export default function DiscoverPage() {
             </div>
           </div>
 
-          {showFilters && (
+          {/* {showFilters && (
             <div className="glass rounded-lg p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -200,23 +196,24 @@ export default function DiscoverPage() {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
         
         <div className="mb-8">
           <h2 className="text-sm font-medium text-muted-foreground mb-3">Select a Genre</h2>
           <div className="flex flex-wrap gap-2">
             {currentGenres.map(genre => (
-              <Badge
+              <Button
                 key={genre.id}
-                variant={selectedGenre === genre.id ? 'default' : 'secondary'}
+                variant={selectedGenre === genre.id ? 'default' : 'outline'}
+                onClick={() => setSelectedGenre(selectedGenre === genre.id ? null : genre.id)}
                 className={cn(
-                  "cursor-pointer transition-all hover:scale-105",
+                  "transition-all",
                   selectedGenre === genre.id && "ring-2 ring-primary ring-offset-2 ring-offset-background"
                 )}
-                onClick={() => setSelectedGenre(selectedGenre === genre.id ? null : genre.id)}
+                size="sm"
               >
                 {genre.name}
-              </Badge>
+              </Button>
             ))}
           </div>
         </div>
