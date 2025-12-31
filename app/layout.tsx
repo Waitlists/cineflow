@@ -102,17 +102,6 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className="font-sans antialiased">
 
-        {/* Your ad/tracker script */}
-        <Script strategy="afterInteractive">{`
-          (function(s){
-            s.dataset.zone='10262537',
-            s.src='https://bvtpk.com/tag.min.js'
-          })
-          ([document.documentElement, document.body]
-          .filter(Boolean)
-          .pop()
-          .appendChild(document.createElement('script')))
-        `}</Script>
 
         <Header />
         {children}
